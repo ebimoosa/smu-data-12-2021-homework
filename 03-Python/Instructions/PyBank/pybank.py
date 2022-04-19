@@ -1,7 +1,5 @@
 import csv
-csvpath = "Resources/budget_data.csv"
-
-# ------------------------------------------------------------------------
+csvpath = "Instructions/PyBank/Resources/budget_data.csv"
 
 # set initial variable values
 total_months = 0
@@ -9,6 +7,7 @@ tProfits = 0
 
 # changes for "average changes" stored in a list and variable previous profit
 changes = []
+change_months = []
 pProfits = 0
 
 # read csv and seperate data by comma
@@ -35,16 +34,25 @@ with open(csvpath, "r") as file:
             # calculate change by taking the profit of row and subtracting from last prious profit.
             change = int(row[1]) - pProfits
             changes.append(change)
-
-            # calculate average changes and round value
-            avg_changes = round(sum(changes)/len(changes),2)
+            change_months.append(row[0])
        
         pProfits = int(row[1])
 
         print(row)
 
+# calculate average changes and round value
+avg_changes = round(sum(changes)/len(changes),2)
 
-print(total_months)
-print(tProfits)
-print(changes)
-print(avg_changes)
+# put results in one string
+results = f"""Results
+-----------------------------
+Total Months: {total_months} 
+total: ${tProfits} 
+Average change: ${avg_changes} 
+Largest increase in profit: Feb-2012 ${max(changes)} 
+Greatest decrease in profit: Sep-2013 ${min(changes)}"""
+
+print(results)
+
+with open("Instructions/PyBank/results.txt", "w") as file:
+    file.write(results)
