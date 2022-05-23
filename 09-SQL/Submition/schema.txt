@@ -1,0 +1,46 @@
+Titles
+-----------
+ID PK serial
+title_id VarChar(5)
+title VarChar(50)
+last_modified timestamp
+
+Departments
+-----
+ID PK serial
+dept_no VarChar(5) 
+dept_name VarChar(50)
+last_modified timestamp
+
+Employees
+----
+ID PK serial 
+emp_no int
+emp_title_id VarChar(5) FK >- Titles.title_id
+birth_date date
+first_name VarChar(50)
+last_name VarChar(50)
+sex VarChar(2)
+hire_date date
+last_modified timestamp
+
+dept_manager
+----
+ID PK serial 
+dept_no VarChar(5) FK >- Departments.dept_no
+emp_no int FK >- Employees.emp_no
+last_modified timestamp
+
+Salaries
+----
+ID PK serial
+emp_no int FK >- Employees.emp_no
+salary int
+last_modified timestamp
+
+dept_emp
+----
+ID PK serial
+emp_no int FK >- Employees.emp_no
+dept_no VarChar(5) FK >- Departments.dept_no
+last_modified timestamp
