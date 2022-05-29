@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Plot.ly HW</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/sandstone/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="static/js/app.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 jumbotron text-center">
+                <h1>Belly Button Biodiversity Dashboard</h1>
+            </div>
+        </div>
+        <div class = 'container-fluid'>
+            <div class="col-md-12">
+                <div class="card border-primary mb-3">
+                    <div class="card-header">About the dataset</div>
+                    <div class="card-body">
+                    <h4 class="card-title">Belly Button Biodiversity</h4>
+                    <p class="card-text">The data used to create this dashboard came from NC State University. The study was condutcted from 2011 to 2012 and looks at the microbes that grow in the belly button. The study looked to answer the following questions:</p>
+                    <p>What and how many species live in the belly button?</p>
+                    <p>Why are some species common in many belly buttons and (most) others are rare?</p>
+                    <p>What factors determine the number and kinds of microbes we see in individual belly buttons?</p>
+                    <p>Use the interactive charts below to explore the dataset</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="well">
+                    <h5>Test Subject ID No.:</h5>
+                    <select id="selDataset"></select>
+                </div>
+                <br>
+                <br>
+                <div class="card border-primary mb-3" style="max-width: 20rem;">
+                    <div class="card-header"><h4>Demographic Info</h4></div>
+                    <div id = 'metadata' class="card-body">
+                    </div>
+                  </div>
+            </div>
+            <div class="col-md-5">
+                <br>
+                <br>
+                <div id="bar"></div>
+            </div>
+            <div class="col-md-5">
+                <br>
+                <br>
+                <br>
+                <div class="card border-primary mb-3" style="max-width: 20rem;">
+                    <div class="card-header">Bacteria: Good or Bad?</div>
+                    <div class="card-body">
+                      <p class="card-text">The bacteria that lives on the surface of your skin can be both good or bad. Bacteria like Bacillus helps fight other harmful pathogens before they can harm us, this includes other bacteria and fungi!</p>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="bubble"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
