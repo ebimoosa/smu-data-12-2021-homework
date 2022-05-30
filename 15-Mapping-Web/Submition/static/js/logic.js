@@ -1,55 +1,35 @@
 $(document).ready(function() {
-    doWork();
+doWork();
 });
 
 function doWork() {
     var url = `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson`;
-    var plate_url = 'static/data/PB2002_boundaries.json';
-    requestAjax(url, plate_url);
+    var boundaries = 'static/data/boundaries.json';
+
+    requestAjax(url, boundaries);
 }
 
-function requestD3(url, plate_url) {
-
-    // Perform a GET request to the query URL.
-    d3.json(url).then(function(data) {
-        // NESTED request to get the second data set
-        d3.json(plate_url).then(function(plate_data) {
-            console.log(data);
-            console.log(plate_data);
-            createMap(data, plate_data);
-        });
-    });
-
-}
-
-function requestAjax(url, plate_url) {
+function requestAjax(url, boundaries) {
     $.ajax({
         type: "GET",
         url: url,
         contentType: "application/json; charset=utf-8",
         success: function(data) {
-            // NESTED AJAX
+            // boundaries request
             $.ajax({
                 type: "GET",
-                url: plate_url,
+                url: boundaries,
                 contentType: "application/json",
                 dataType: "json",
-                success: function(plate_data) {
+                success: function(boundaries) {
                     console.log(data);
-                    console.log(plate_data);
-                    createMap(data, plate_data);
-
-                },
-                error: function(data) {
-                    console.log("YOU BROKE IT!!");
-                },
-                complete: function(data) {
-                    console.log("Request finished");
+                    console.log(boundaries);
+                    createMap(data, boundaries);
                 }
             });
         },
         error: function(textStatus, errorThrown) {
-            console.log("FAILED to get data");
+            console.log("Failed to get data");
             console.log(textStatus);
             console.log(errorThrown);
         }
@@ -57,21 +37,20 @@ function requestAjax(url, plate_url) {
 }
 
 function onEachFeature(feature, layer) {
-    // does this feature have a property named popupContent?
-    if (feature.properties) {
-        layer.bindPopup(`<h3>${ feature.properties.title } at depth: ${feature.geometry.coordinates[2].toFixed(0)}m</h3><hr><p>${new Date(feature.properties.time)}</p >`);
-    }
+// pop up on hover
+if (feature.properties) {
+    layer.bindPopup(`<h3>${ feature.properties.title }</h3><hr><p>${new Date(feature.properties.time)}</p >`);
+}
 }
 
 
 // 3.
 // createMap() takes the earthquake data and incorporates it into the visualization:
-function createMap(data, plate_data) {
 
-    // apply the filter (if necessary)
+function createMap(data, boundaries) {
+
     var earthquakes = data.features
 
-    // Base Layers
     var dark_layer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         id: 'mapbox/dark-v10',
@@ -102,24 +81,35 @@ function createMap(data, plate_data) {
         onEachFeature: onEachFeature
     });
 
-    // plate layer
-    var plateLayer = L.geoJson(plate_data.features, {
-        style: {
-            "color": "orange",
-            "weight": 1,
-            "opacity": 0.8
+    // Prof Booth
+    function getRadius(mag) {
+        return mag * 50000
+    }
+    
+    // depth ranges from https://www.usgs.gov/programs/earthquake-hazards/determining-depth-earthquake#:~:text=Shallow%20earthquakes%20are%20between%200,earthquakes%20deeper%20than%2070%20km.
+    function getColor(depth) {
+        let color = 'red';
+    
+        if (depth >= 300) {
+            color = "red";
+        } else if (depth >= 70) {
+            color = "yellow";
+        } else {
+            color = 'green';
         }
-    });
+        return (color);
+    }
 
-    // A SECOND OVERLAY OBJECT
+    // Create earthquake circle overlay object
     var circles = [];
     for (let i = 0; i < earthquakes.length; i++) {
         let earthquake = earthquakes[i];
-        let circle_color = "green";
+        // let circle_color = "blue";
 
-        let location = [earthquake.geometry.coordinates[1], earthquake.geometry.coordinates[0]]
+        // get coordinates from response
+        let coord = [earthquake.geometry.coordinates[1], earthquake.geometry.coordinates[0]]
 
-        let circle = L.circle(location, {
+        let circle = L.circle(coord, {
             color: getColor(earthquake.geometry.coordinates[2]),
             fillColor: getColor(earthquake.geometry.coordinates[2]),
             fillOpacity: 0.8,
@@ -128,7 +118,15 @@ function createMap(data, plate_data) {
         circles.push(circle);
     }
 
-    var circleLayer = L.layerGroup(circles);
+    var markerLayer = L.layerGroup(circles);
+
+    var boundaryLayer = L.geoJson(boundaries.features, {
+        style: {
+            "color": "red",
+            "weight": 1,
+            "opacity": 1
+        }
+    });
 
 
     // Create a baseMaps object.
@@ -141,9 +139,9 @@ function createMap(data, plate_data) {
 
     // Overlays that can be toggled on or off
     var overlayMaps = {
-        Markers: earthquakeLayer,
-        Circles: circleLayer,
-        Plates: plateLayer
+        Earthquake: earthquakeLayer,
+        Circles: markerLayer,
+        PlateBoundaries: boundaryLayer
     };
 
     // Create a new map.
@@ -153,23 +151,25 @@ function createMap(data, plate_data) {
             37.09, -95.71
         ],
         zoom: 5,
-        layers: [dark_layer, circleLayer, plateLayer]
+        layers: [dark_layer, earthquakeLayer, markerLayer, boundaryLayer]
     });
+
 
     // Create a layer control that contains our baseMaps.
     // Be sure to add an overlay Layer that contains the earthquake GeoJSON.
     L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 
-    // add legend
-    // https://gis.stackexchange.com/questions/133630/adding-leaflet-legend
+
+    // create legend
+    // Prof Booth
     var legend = L.control({
-        position: "bottomright"
+        position: 'bottomright'
     });
 
     legend.onAdd = function() {
         var div = L.DomUtil.create('div', 'info legend');
-        var labels = ["<10", "10-30", "30-70", "70+"];
-        var colors = ["green", "yellow", "orange", "red"];
+        var labels = ["0-70", "70-300", "300-700"];
+        var colors = ["green", "yellow", "red"];
 
         for (let i = 0; i < labels.length; i++) {
             let label = labels[i];
@@ -182,24 +182,5 @@ function createMap(data, plate_data) {
     }
 
     legend.addTo(myMap);
-}
 
-function getRadius(mag) {
-    return mag * 10000
-}
-
-function getColor(depth) {
-    let color = 'red';
-
-    if (depth >= 70) {
-        color = "red";
-    } else if (depth >= 30) {
-        color = "orange";
-    } else if (depth >= 10) {
-        color = "yellow";
-    } else {
-        color = 'green';
-    }
-
-    return (color);
 }
