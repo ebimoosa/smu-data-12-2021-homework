@@ -1,0 +1,11 @@
+Given that the data is pretty straight forward and categorical, I would say that the simpler linear regression model will have a better performance that the random forest. The difference in performance I am not sure on, but I do not think the linear regression model will be drastically better. 
+
+For the scaled I think the linear model will perform better than the unscaled. I would not predict much difference in the score for the random forrest model. The scaled data benefits a linear model more than it would for a random forest.
+
+——————————————————————————————————
+
+For the linear regression model, the unscaled data did not perform well at all. The predicted accuracy was 65%, with no signs of overfitting. The actual test results were worse, with an accuracy of 52%. The AUC score was .45.
+For the random forest, the predicted was overfit with a perfect fit with he training data. For the test data, it had a 63% accuracy, performing better than the linear model. The AUC score was .69.
+
+For the scaled data, the predicted and actual results were very close for the linear model. The predicted accuracy was 71% while the actual was 67%. The AUC was the highest of the model with a score of .73.
+The random forest performed slightly worse with the scaled data than with the unscaled data. The predicted model overfit again with the model fitting the test data perfectly. The actual was less accurate with 57% accuracy and the AUC score was lower with a score of .63.
