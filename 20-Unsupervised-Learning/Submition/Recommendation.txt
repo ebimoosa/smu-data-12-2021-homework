@@ -1,0 +1,1 @@
+Looking at both the 99% feature set and 90 feature set, both of the k_means show that we can get about 4 clusters from the crytocurrencies that we are looking at. 
