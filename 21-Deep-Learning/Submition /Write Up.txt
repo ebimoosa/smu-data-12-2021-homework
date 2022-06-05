@@ -1,0 +1,22 @@
+1. Overview of the analysis: Explain the purpose of this analysis. - 
+The purpose of this analysis is to apply neural net and deep learning to be able to show that trends can be found in data. In this case finding out whether or not applicants looking to get funded will be approved or not.
+
+2. Results: Data Preprocessing -
+	•	What variable is considered the Target?
+	⁃	The target is IS_SUCCESSFUL, as we are trying to see if an application is approved.
+	•	What Variables are considered to be features of the model?
+	⁃	ASK_AMT, NAME, APPLICATION_TYPE, AFFILIATION, CLASSIFICATION, USE_CASR, ORGANIZATION, STATUS, INCOME_AMT, SPECIAL_CONSIDERATIONS
+	•	What variables are neither target nor features and need to be removed?
+	•	EIN, and half of the SPECIAL_CONSIDERATION field once it is one-hot-encoded since it is a binary field. 
+
+	•	Compiling, Training, and Evaluating the Model-
+	•	How many neurons, layers, and activation functions were used and why?
+	•	A total of 22 neurons were used across 3 hidden layers. I used a mixture of tanh and relu activations functions for the hidden layers and sigmoid for the output layer. I used 3 hidden layers due to the amount of features that needed to be run. With 2 layers the model did not perform as well as having 3, with a 20% increase in accuracy going from 2 to 3 hidden layers. 
+	•	Where you able to achieve the target model performance?
+	•	Yes, but only after optimizing the model by adding the NAME column as a feature. Without this column the highest I was able to achieve was 73% accuracy. With he name column I was able to achieve an 81% accuracy on the first run.
+	•	What steps did you take to try and increase performance?
+	•	The first and biggest step I took was adding an extra hidden layer to increase performance. The addition of the 3rd layer drastically improved performance. The next step that was taken was the number of rows to include in some of the columns. For APPLICATION_TYPE, I went from 100, to 50, to settling on 10. For CLASSIFICATION I went from 100, to 50, to 10.  The next thing I did to increase performance was swap the activation functions. I started with all relu functions then swapped out for tanh functions for each layer. The best performance I got was using relu to start and using tanh on the next 2 layers. 
+
+Summary -
+The final model ended up having an accuracy of 80% and a loss of .45. The model trained for 100 epochs but stayed fairly consistent after the first 10 epochs. The model could probably be fine tuned further to get better performance as it hit the target accuracy after the first attempt of adding the NAME column as a feature. A tree based model could be used as well to solve this classification model. It would be more explainable than a neural network, and probably require less fine tuning to get a usable model (the 75% accuracy target). From the forest models I would think that a LightGBM model would probably give the most comparable results. 
+
